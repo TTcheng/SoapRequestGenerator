@@ -1,12 +1,9 @@
 package wcc.ui;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXTextField;
+import com.jfoenix.controls.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -16,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import wcc.components.WsdlRequestGenerator;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -87,9 +85,9 @@ public class Controller implements Initializable {
     }
 
     private void alert(String msg) {
-        Alert info = new Alert(Alert.AlertType.INFORMATION, msg);
-        //info.setDialogPane(alertPan);
-        info.show();
+        JFXButton btn = new JFXButton("Okay!");
+        AlertMaker.showMaterialDialog(rootPane, anchorPane, Arrays.asList(btn), msg, null);
+        return;
     }
 
     @FXML
