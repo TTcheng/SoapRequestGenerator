@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import com.jfoenix.controls.JFXTextField?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" stylesheets="@dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wcc.ui.Controller">
+   <children>
+      <AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@dark-theme.css">
+         <children>
+            <VBox fx:id="rootBox" layoutX="13.0" layoutY="14.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <HBox fx:id="inputBox" spacing="10.0">
+                     <children>
+                        <JFXTextField fx:id="url" promptText="url" HBox.hgrow="ALWAYS" />
+                        <JFXButton fx:id="reqBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="Req" HBox.hgrow="ALWAYS" />
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="BOTTOM_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
+                     <children>
+                        <JFXTextArea fx:id="showArea" prefColumnCount="10" promptText="Copy the wsdl url above,click a button to generate!" HBox.hgrow="ALWAYS" />
+                        <VBox fx:id="" prefHeight="36.0" prefWidth="85.0">
+                           <children>
+                              <JFXButton fx:id="resBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="Res" VBox.vgrow="ALWAYS" />
+                              <JFXButton fx:id="allBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="All" VBox.vgrow="ALWAYS">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </JFXButton>
+                              <JFXButton fx:id="clearBtn" onAction="#clear" prefHeight="36.0" prefWidth="85.0" text="Clear">
+                                 <VBox.margin>
+                                    <Insets top="20.0" />
+                                 </VBox.margin>
+                              </JFXButton>
+                           </children>
+                        </VBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+            </VBox>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
