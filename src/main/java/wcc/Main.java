@@ -10,9 +10,12 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Pane root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("mainWindow.fxml"));
+        Pane root = loader.load();
+        Scene scene = new Scene(root, 640, 480);
         primaryStage.setTitle("WsdlRequestGenerator");
-        primaryStage.setScene(new Scene(root, 640, 480));
+        primaryStage.setScene(scene);
+        primaryStage.sizeToScene();
         primaryStage.show();
     }
 

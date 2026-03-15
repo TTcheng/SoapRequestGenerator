@@ -1,8 +1,9 @@
-package wcc;
+package wcc.test;
 
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.jupiter.api.Assertions;
 import wcc.components.WsdlRequestGenerator;
 
 /**
@@ -26,10 +27,12 @@ public class WsdlRequestGeneratorTest {
      * Method: generate(String url)
      */
     @Test
-    public void testGenerate() throws Exception {
+    public void testGenerate() {
         WsdlRequestGenerator generator = new WsdlRequestGenerator();
         generator.setCreateResponse(false);
-        String res = generator.generate("http://localhost:8081/core/ws/helloWs?wsdl");
-        System.out.print(res);
+        Assertions.assertDoesNotThrow(() -> {
+            String res = generator.generate("http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx?wsdl");
+            System.out.print(res);
+        });
     }
-} 
+}

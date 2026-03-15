@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" stylesheets="@dark-theme.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wcc.ui.Controller">
+<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="640.0" stylesheets="@dark-theme.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="wcc.ui.Controller">
    <children>
       <AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@dark-theme.css">
          <children>
@@ -30,7 +30,7 @@
                   <HBox alignment="BOTTOM_LEFT" spacing="10.0" VBox.vgrow="ALWAYS">
                      <children>
                         <JFXTextArea fx:id="showArea" prefColumnCount="10" promptText="Copy the wsdl url above,click a button to generate!" HBox.hgrow="ALWAYS" />
-                        <VBox fx:id="" prefHeight="36.0" prefWidth="85.0">
+                        <VBox prefHeight="36.0" prefWidth="85.0">
                            <children>
                               <JFXButton fx:id="resBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="Res" VBox.vgrow="ALWAYS" />
                               <JFXButton fx:id="allBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="All" VBox.vgrow="ALWAYS">

@@ -1,6 +1,8 @@
 package wcc.ui;
 
-import com.jfoenix.controls.*;
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
+import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,11 +15,11 @@ import org.slf4j.LoggerFactory;
 import wcc.components.WsdlRequestGenerator;
 
 import java.net.URL;
-import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @FXML
     private StackPane rootPane;
@@ -51,26 +53,24 @@ public class Controller implements Initializable {
     @FXML
     private void generate(ActionEvent event) {
         Object source = event.getSource();
-        if (source instanceof JFXButton) {
-            JFXButton btn = (JFXButton) source;
+        if (source instanceof JFXButton btn) {
             switch (btn.getId()) {
-                case "reqBtn":
+                case "reqBtn" -> {
                     generator.setCreateRequest(true);
                     generator.setCreateResponse(false);
-                    break;
-                case "resBtn":
+                }
+                case "resBtn" -> {
                     generator.setCreateRequest(false);
                     generator.setCreateResponse(true);
-                    break;
-                case "allBtn":
+                }
+                case "allBtn" -> {
                     generator.setCreateRequest(true);
                     generator.setCreateResponse(true);
-                    break;
-                default:
-                    break;
+                }
+                default -> {}
             }
             String wsdlUrl = this.url.getText();
-            if (wsdlUrl == null || "".equals(wsdlUrl.trim())) {
+            if (wsdlUrl == null || wsdlUrl.trim().isEmpty()) {
                 alert("You must input an URL!");
                 return;
             }
@@ -79,15 +79,14 @@ public class Controller implements Initializable {
                 showArea.appendText(result);
             } catch (Exception e) {
                 showArea.appendText("===========ERROR===========\n");
-                logger.error("GenerateFailed", e);
+                logger.error("Generate failed", e);
             }
         }
     }
 
     private void alert(String msg) {
         JFXButton btn = new JFXButton("Okay!");
-        AlertMaker.showMaterialDialog(rootPane, anchorPane, Arrays.asList(btn), msg, null);
-        return;
+        AlertMaker.showMaterialDialog(rootPane, anchorPane, List.of(btn), msg, null);
     }
 
     @FXML
