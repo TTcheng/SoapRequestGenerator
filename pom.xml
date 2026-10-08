@@ -13,7 +13,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>21</java.version>
         <javafx.version>21.0.10</javafx.version>
-        <jfoenix.version>9.0.10</jfoenix.version>
     </properties>
     <profiles>
         <profile>
@@ -95,12 +94,61 @@
                             <noManPages>true</noManPages>
                             <stripDebug>true</stripDebug>
                             <noHeaderFiles>true</noHeaderFiles>
-                            <options>
-                                <!--<option>&#45;&#45;add-opens</option>-->
-                                <!--<option>javafx.graphics/com.sun.javafx.tk=ALL-UNNAMED</option>-->
-                                <!--<option>&#45;&#45;add-opens</option>-->
-                                <!--<option>javafx.graphics/com.sun.javafx.util=ALL-UNNAMED</option>-->
-                            </options>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- soapui pulls TestNG and the JUnit 5 platform onto the test class path, so
+                 surefire's provider auto detection picks TestNG / JUnit platform and silently
+                 runs zero tests. Pin the provider to JUnit 4, which is what this project uses. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit4</artifactId>
+                        <version>3.5.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Runnable fat jar: java -jar target/SoapRequestGenerator.jar.
+                 The platform specific JavaFX classifier jars are included, so the produced
+                 jar only runs on the platform matching ${javafx.platform}. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>wcc.Main</mainClass>
+                                </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
@@ -109,7 +157,22 @@
     </build>
 
     <dependencies>
-        <!-- JavaFX dependencies with platform classifier -->
+        <!-- JavaFX dependencies with platform classifier.
+             Every platform module used by the app must be declared explicitly with a classifier:
+             a classifier is not inherited by transitive dependencies, so relying on e.g.
+             javafx-controls -> javafx-graphics would pull the empty (classifier-less) stub jar. -->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -121,13 +184,6 @@
             <artifactId>javafx-fxml</artifactId>
             <version>${javafx.version}</version>
             <classifier>${javafx.platform}</classifier>
-        </dependency>
-
-        <!-- JFoenix: JavaFx Extended library for Java 21 -->
-        <dependency>
-            <groupId>com.jfoenix</groupId>
-            <artifactId>jfoenix</artifactId>
-            <version>${jfoenix.version}</version>
         </dependency>
 
         <!-- soapui http://www.soapui.org/-->
@@ -159,6 +215,13 @@
                     <groupId>com.oracle</groupId>
                     <artifactId>javafx</artifactId>
                 </exclusion>
+
+                <!-- soapui 5.9.1 drags in JavaFX 17 for every platform; the app uses
+                     the JavaFX ${javafx.version} modules declared above instead. -->
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -175,12 +238,14 @@
             <version>1.4.14</version>
         </dependency>
 
-        <!-- JUnit for testing -->
+        <!-- JUnit, used by the tests and required at runtime:
+             soapui 5.9.1 references junit.framework.ComparisonFailure from
+             com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter, so WSDL import fails
+             with NoClassDefFoundError when junit is missing from the runtime class path. -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

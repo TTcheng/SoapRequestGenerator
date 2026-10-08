@@ -1,11 +1,11 @@
 package wcc.ui;
 
-import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextArea;
-import com.jfoenix.controls.JFXTextField;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -31,29 +31,29 @@ public class Controller implements Initializable {
     private VBox rootBox;
 
     @FXML
-    private JFXTextArea showArea;
+    private TextArea showArea;
 
     @FXML
     private HBox inputBox;
 
     @FXML
-    private JFXTextField url;
+    private TextField url;
 
     @FXML
-    private JFXButton reqBtn;
+    private Button reqBtn;
     @FXML
-    private JFXButton resBtn;
+    private Button resBtn;
     @FXML
-    private JFXButton allBtn;
+    private Button allBtn;
     @FXML
-    private JFXButton clearBtn;
+    private Button clearBtn;
 
     private WsdlRequestGenerator generator;
 
     @FXML
     private void generate(ActionEvent event) {
         Object source = event.getSource();
-        if (source instanceof JFXButton btn) {
+        if (source instanceof Button btn) {
             switch (btn.getId()) {
                 case "reqBtn" -> {
                     generator.setCreateRequest(true);
@@ -85,7 +85,7 @@ public class Controller implements Initializable {
     }
 
     private void alert(String msg) {
-        JFXButton btn = new JFXButton("Okay!");
+        Button btn = new Button("Okay!");
         AlertMaker.showMaterialDialog(rootPane, anchorPane, List.of(btn), msg, null);
     }
 
