@@ -1,23 +1,19 @@
 package wcc;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 
-public class Main extends Application {
-
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        Pane root = FXMLLoader.load(getClass().getResource("mainWindow.fxml"));
-        primaryStage.setTitle("WsdlRequestGenerator");
-        primaryStage.setScene(new Scene(root, 640, 480));
-        primaryStage.show();
-    }
-
+/**
+ * Entry point.
+ *
+ * <p>Deliberately <em>not</em> an {@link Application} subclass: the JavaFX launcher only
+ * refuses to start ("JavaFX runtime components are missing") when the main class itself
+ * extends {@code Application} and the JavaFX modules are on the class path instead of the
+ * module path. Launching through this class keeps {@code java -jar}, an IDE run
+ * configuration and {@code mvn javafx:run} all working.
+ */
+public class Main {
 
     public static void main(String[] args) {
-        launch(args);
+        Application.launch(App.class, args);
     }
 }

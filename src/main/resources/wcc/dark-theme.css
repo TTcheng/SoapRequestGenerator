@@ -36,29 +36,20 @@
     -fx-text-fill: -fx-primary;
 }
 
-.text-field
+.text-field, .text-area
 {
-    -fx-text-fill: -fx-primarytext;
     -fx-font-size : 12pt;
-    -jfx-focus-color: -fx-secondary;
     -fx-text-fill: derive(-fx-secondary, 20%);
+    -fx-prompt-text-fill: derive(-fx-primarytext, -10%);
+    -fx-control-inner-background: derive(-fx-primary, 15%);
+    -fx-background-color: transparent;
+    -fx-border-color: derive(-fx-primarytext, -35%);
+    -fx-border-radius: 3px;
 }
 
-.text-area
+.text-field:focused, .text-area:focused
 {
-    -fx-text-fill: -fx-primarytext;
-    -fx-font-size : 12pt;
-    -jfx-focus-color: -fx-secondary;
-    -fx-text-fill: derive(-fx-secondary, 20%);
-}
-
-/*Login Screen Specific*/
-
-
-.wrong-credentials
-{
-    -jfx-unfocus-color: #ef5350;
-    -jfx-focus-color: #ef5350;
+    -fx-border-color: -fx-secondary;
 }
 
 /*Main Screen CSS Styling starts here*/
@@ -167,9 +158,11 @@
     -fx-text-fill: white;
 }
 
-.jfx-layout-actions
+.dialog-actions
 {
-    -fx-hgap:8;
+    -fx-spacing: 8px;
+    -fx-alignment: CENTER_RIGHT;
+    -fx-padding: 20px;
 }
 
 /*Chart Styling*/
@@ -278,23 +271,27 @@
 }
 
 
-/*JFXDialog styling*/
-.jfx-layout-heading
+/*Dialog styling*/
+.dialog-overlay{
+    -fx-background-color: rgba(0, 0, 0, 0.35);
+}
+.dialog-layout{
+    -fx-background-color: -fx-primary;
+    -fx-background-radius: 4px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 20, 0.2, 0, 8);
+}
+.dialog-heading
 {
     -fx-background-color: -fx-color-1;
-}
-.jfx-layout-heading .label
-{
+    -fx-background-radius: 4px 4px 0 0;
     -fx-text-fill: white;
     -fx-font-size: 12pt;
+    -fx-padding: 12px 20px;
 }
-.jfx-layout-body, .jfx-layout-actions{
-    -fx-background-color: -fx-primary;   
-}
-.jfx-layout-body .label
+.dialog-body
 {
     -fx-text-fill: white;
-    -fx-padding: 20px 0 0 0;
+    -fx-padding: 20px 20px 0 20px;
 }
 
 
@@ -310,7 +307,6 @@
 
 .checkbox-main{
     -fx-text-fill: -fx-secondary; 
-    -jfx-checked-color: -fx-primary;
     -fx-font-size: 10pt;
 }
 

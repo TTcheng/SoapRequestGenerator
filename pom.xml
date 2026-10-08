@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <packaging>jar</packaging>
@@ -9,13 +9,119 @@
     <artifactId>SoapRequestGenerator</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>21</java.version>
+        <javafx.version>21.0.10</javafx.version>
+    </properties>
+    <profiles>
+        <profile>
+            <id>javafx.platform.linux.x86_64</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+                <property>
+                    <name>javafx.monocle</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <properties>
+                <javafx.platform>linux</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>javafx.platform.macosx.x86_64</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                    <arch>x86_64</arch>
+                </os>
+                <property>
+                    <name>javafx.monocle</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <properties>
+                <javafx.platform>mac</javafx.platform>
+            </properties>
+        </profile>
+        <profile>
+            <id>javafx.platform.windows.x86_64</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                    <arch>amd64</arch>
+                </os>
+                <property>
+                    <name>javafx.monocle</name>
+                    <value>!true</value>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <javafx.platform>win</javafx.platform>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <finalName>SoapRequestGenerator</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <release>${java.version}</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.8</version>
+                <executions>
+                    <execution>
+                        <id>default-cli</id>
+                        <configuration>
+                            <mainClass>wcc.Main</mainClass>
+                            <launcher>app</launcher>
+                            <jlinkZipName>app</jlinkZipName>
+                            <jlinkImageName>app</jlinkImageName>
+                            <noManPages>true</noManPages>
+                            <stripDebug>true</stripDebug>
+                            <noHeaderFiles>true</noHeaderFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- soapui pulls TestNG and the JUnit 5 platform onto the test class path, so
+                 surefire's provider auto detection picks TestNG / JUnit platform and silently
+                 runs zero tests. Pin the provider to JUnit 4, which is what this project uses. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.surefire</groupId>
+                        <artifactId>surefire-junit4</artifactId>
+                        <version>3.5.4</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <!-- Runnable fat jar: java -jar target/SoapRequestGenerator.jar.
+                 The platform specific JavaFX classifier jars are included, so the produced
+                 jar only runs on the platform matching ${javafx.platform}. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.1</version>
+                <version>3.5.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -23,41 +129,68 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <transformers>
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>wcc.Main</mainClass>
                                 </transformer>
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
                             </transformers>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>8</source>
-                    <target>8</target>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-
-        <!--jfoenix: JavaFx Extended library -->
+        <!-- JavaFX dependencies with platform classifier.
+             Every platform module used by the app must be declared explicitly with a classifier:
+             a classifier is not inherited by transitive dependencies, so relying on e.g.
+             javafx-controls -> javafx-graphics would pull the empty (classifier-less) stub jar. -->
         <dependency>
-            <groupId>com.jfoenix</groupId>
-            <artifactId>jfoenix</artifactId>
-            <version>8.0.8</version>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-base</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
         </dependency>
-        <!--soapui http://www.soapui.org/-->
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-graphics</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>${javafx.version}</version>
+            <classifier>${javafx.platform}</classifier>
+        </dependency>
+
+        <!-- soapui http://www.soapui.org/-->
         <dependency>
             <groupId>com.smartbear.soapui</groupId>
             <artifactId>soapui</artifactId>
-            <version>5.1.0</version>
-
+            <version>5.9.1</version>
             <exclusions>
 
                 <!-- These are mainly GUI artifacts not needed in the headless test runner-->
@@ -78,22 +211,52 @@
                     <groupId>com.jgoodies</groupId>
                     <artifactId>binding</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.oracle</groupId>
+                    <artifactId>javafx</artifactId>
+                </exclusion>
+
+                <!-- soapui 5.9.1 drags in JavaFX 17 for every platform; the app uses
+                     the JavaFX ${javafx.version} modules declared above instead. -->
+                <exclusion>
+                    <groupId>org.openjfx</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
-            <version>4.4</version>
+            <version>4.4.16</version>
         </dependency>
 
+        <!-- SLF4J for logging -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.14</version>
+        </dependency>
 
+        <!-- JUnit, used by the tests and required at runtime:
+             soapui 5.9.1 references junit.framework.ComparisonFailure from
+             com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter, so WSDL import fails
+             with NoClassDefFoundError when junit is missing from the runtime class path. -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+        </dependency>
     </dependencies>
 
     <repositories>
         <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+        <repository>
             <id>smartbear-sweden-plugin-repository</id>
-            <url>http://www.soapui.org/repository/maven2/</url>
+            <url>https://www.soapui.org/repository/maven2/</url>
         </repository>
     </repositories>
 
