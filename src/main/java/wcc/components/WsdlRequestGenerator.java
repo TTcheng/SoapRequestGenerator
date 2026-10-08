@@ -8,6 +8,9 @@ import com.eviware.soapui.model.iface.Operation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class WsdlRequestGenerator {
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -18,21 +21,32 @@ public class WsdlRequestGenerator {
         WsdlProject project = new WsdlProject();
         WsdlInterface[] wsdls = WsdlImporter.importWsdl(project, url);
         StringBuilder res = new StringBuilder();
+        Set<String> generatedOperations = new HashSet<>();
         for (WsdlInterface wsdl : wsdls) {
-            res.append("==========================\n");
+            StringBuilder section = new StringBuilder();
             for (Operation operation : wsdl.getOperationList()) {
                 WsdlOperation wsdlOperation = (WsdlOperation) operation;
-                res.append("OP:").append(wsdlOperation.getName()).append('\n');
+                // A WSDL normally binds the same operations once per SOAP version
+                // (SOAP 1.1 and SOAP 1.2), one sample per operation is enough.
+                if (!generatedOperations.add(wsdlOperation.getName())) {
+                    continue;
+                }
+                section.append("OP:").append(wsdlOperation.getName()).append('\n');
                 if (createRequest) {
-                    res.append("Request:").append('\n')
+                    section.append("Request:").append('\n')
                             .append(wsdlOperation.createRequest(createRequest)).append('\n');
                 }
                 if (createResponse) {
-                    res.append("Response:").append('\n')
+                    section.append("Response:").append('\n')
                             .append(wsdlOperation.createResponse(createResponse)).append('\n');
                 }
             }
-            res.append("==========================\n");
+            if (!section.isEmpty()) {
+                res.append("==========================\n")
+                        .append("Interface:").append(wsdl.getName()).append('\n')
+                        .append("==========================\n")
+                        .append(section);
+            }
         }
         return res.toString();
     }
