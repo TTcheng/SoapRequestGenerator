@@ -16,6 +16,12 @@ public class App extends Application {
         primaryStage.setTitle("WsdlRequestGenerator");
         primaryStage.setScene(scene);
         primaryStage.sizeToScene();
+        primaryStage.setOnCloseRequest(event -> {
+            // soapui leaves non daemon threads behind (a java.util.Timer and, in some
+            // paths, AWT threads) as soon as it has imported a WSDL, so the JVM would
+            // keep running after the window is gone. End it explicitly.
+            System.exit(0);
+        });
         primaryStage.show();
     }
 }
