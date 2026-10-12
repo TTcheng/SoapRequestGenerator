@@ -13,9 +13,9 @@
    <children>
       <AnchorPane fx:id="anchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@dark-theme.css">
          <children>
-            <VBox fx:id="rootBox" layoutX="13.0" layoutY="14.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox layoutX="13.0" layoutY="14.0" prefHeight="400.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <HBox fx:id="inputBox" spacing="10.0">
+                  <HBox spacing="10.0">
                      <children>
                         <TextField fx:id="url" promptText="url" HBox.hgrow="ALWAYS" />
                         <Button fx:id="reqBtn" onAction="#generate" prefHeight="36.0" prefWidth="85.0" text="Req" HBox.hgrow="ALWAYS" />

@@ -5,15 +5,11 @@ import com.eviware.soapui.impl.wsdl.WsdlOperation;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlImporter;
 import com.eviware.soapui.model.iface.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class WsdlRequestGenerator {
-    Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private Boolean createRequest = true;
     private Boolean createResponse = true;
 
@@ -51,16 +47,8 @@ public class WsdlRequestGenerator {
         return res.toString();
     }
 
-    public Boolean getCreateResponse() {
-        return createResponse;
-    }
-
     public void setCreateResponse(Boolean createResponse) {
         this.createResponse = createResponse;
-    }
-
-    public Boolean getCreateRequest() {
-        return createRequest;
     }
 
     public void setCreateRequest(Boolean createRequest) {

@@ -7,9 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wcc.components.WsdlRequestGenerator;
@@ -28,13 +26,7 @@ public class Controller implements Initializable {
     private AnchorPane anchorPane;
 
     @FXML
-    private VBox rootBox;
-
-    @FXML
     private TextArea showArea;
-
-    @FXML
-    private HBox inputBox;
 
     @FXML
     private TextField url;
@@ -96,10 +88,6 @@ public class Controller implements Initializable {
 
     public void setShowInfo(String info) {
         showArea.setText(info);
-    }
-
-    public void appendShowInfo(String info) {
-        showArea.appendText(info + "\n");
     }
 
     @Override
